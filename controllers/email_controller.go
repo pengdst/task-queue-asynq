@@ -1,9 +1,13 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/hibiken/asynq"
 	"log"
+	"net/http"
+	"task-queue-asynq/exceptions"
 	"task-queue-asynq/model/web"
 	"task-queue-asynq/tasks"
 	"task-queue-asynq/tasks/prority"
@@ -15,13 +19,18 @@ type EmailController interface {
 }
 
 type EmailControllerImpl struct {
+	validate    *validator.Validate
 	asynqClient *asynq.Client
 }
 
 func (e *EmailControllerImpl) Delivery(ctx *gin.Context) {
 	var payload web.EmailDeliveryPayload
-
 	ctx.Bind(&payload)
+
+	err := e.validate.Struct(payload)
+	if err != nil {
+		panic(exceptions.NewErrorBadRequest(err.Error()))
+	}
 
 	// ------------------------------------------------------
 	// Example 1: Enqueue tasks to be processed immediately.
@@ -59,8 +68,12 @@ func (e *EmailControllerImpl) Delivery(ctx *gin.Context) {
 		log.Fatalf("could not schedule tasks: %v", err)
 	}
 	log.Printf("enqueued tasks: id=%s queue=%s", info.ID, info.Queue)
+
+	ctx.JSON(http.StatusOK, map[string]any{
+		"message": fmt.Sprintf("enqueued tasks: id=%s queue=%s", info.ID, info.Queue),
+	})
 }
 
-func NewEmailController(asyncClient *asynq.Client) EmailController {
-	return &EmailControllerImpl{asynqClient: asyncClient}
+func NewEmailController(validate *validator.Validate, asyncClient *asynq.Client) EmailController {
+	return &EmailControllerImpl{validate: validate, asynqClient: asyncClient}
 }

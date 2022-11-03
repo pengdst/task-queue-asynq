@@ -2,11 +2,13 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/hibiken/asynq"
 	"github.com/hibiken/asynqmon"
 	"log"
 	"task-queue-asynq/configs"
 	"task-queue-asynq/controllers"
+	"task-queue-asynq/exceptions"
 )
 
 var envConf configs.EnvConf
@@ -26,8 +28,10 @@ func main() {
 		RedisConnOpt: asynq.RedisClientOpt{Addr: redisAddr},
 	})
 
-	emailController := controllers.NewEmailController(asynqClient)
-	imageController := controllers.NewImageController(asynqClient)
+	validate := validator.New()
+
+	emailController := controllers.NewEmailController(validate, asynqClient)
+	imageController := controllers.NewImageController(validate, asynqClient)
 
 	router := gin.Default()
 	//http.Handle(asynqmonUI.RootPath()+"/", asynqmonUI)
@@ -36,6 +40,8 @@ func main() {
 	//log.Fatal(http.ListenAndServe(":8080", nil))
 
 	router.GET(asynqmonUI.RootPath()+"/*path", gin.WrapH(asynqmonUI))
+
+	router.Use(gin.CustomRecovery(exceptions.ErrorHandler))
 
 	imagePath := router.Group("image")
 	imagePath.POST("resize", imageController.Resize)

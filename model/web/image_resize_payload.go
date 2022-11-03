@@ -1,5 +1,5 @@
 package web
 
 type ImageResizePayload struct {
-	ImageUrl string `json:"image_url"`
+	ImageUrl string `json:"image_url" validate:"required"`
 }
