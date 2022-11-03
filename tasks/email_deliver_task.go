@@ -6,11 +6,7 @@ import (
 	"fmt"
 	"github.com/hibiken/asynq"
 	"log"
-)
-
-const (
-	TypeEmailDelivery = "email:deliver"
-	TypeImageResize   = "image:resize"
+	taskType "task-queue-asynq/tasks/type"
 )
 
 type EmailDeliveryPayload struct {
@@ -23,7 +19,7 @@ func NewEmailDeliveryTask(userID int, tmplID string) (*asynq.Task, error) {
 	if err != nil {
 		return nil, err
 	}
-	return asynq.NewTask(TypeEmailDelivery, payload), nil
+	return asynq.NewTask(taskType.TypeEmailDelivery, payload), nil
 }
 
 func HandleEmailDeliveryTask(ctx context.Context, t *asynq.Task) error {
