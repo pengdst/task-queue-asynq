@@ -2,6 +2,12 @@
 # Task Queue Asynq
 
 Inspired by Sidekiq from Ruby, I try to make Simple Task App for Queue Processing with the help of Asynq library using Go language and Asynqmon to Serve Monitoring Dashboard
+
+## Requirements
+
+- Redis
+- Go >= 1.18
+
 ## Environment Variables
 
 To run this project, you will need to add the following environment variables to your .env file
@@ -9,7 +15,6 @@ To run this project, you will need to add the following environment variables to
 `REDIS_URL`
 
 `PORT` <= Optional
-
 
 ## Run Locally
 
