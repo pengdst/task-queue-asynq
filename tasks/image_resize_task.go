@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/hibiken/asynq"
 	"log"
+	taskType "task-queue-asynq/tasks/type"
 	"time"
 )
 
@@ -19,7 +20,7 @@ func NewImageResizeTask(src string) (*asynq.Task, error) {
 		return nil, err
 	}
 	// tasks options can be passed to NewTask, which can be overridden at enqueue time.
-	return asynq.NewTask(TypeImageResize, payload, asynq.MaxRetry(5), asynq.Timeout(20*time.Minute)), nil
+	return asynq.NewTask(taskType.TypeImageResize, payload, asynq.MaxRetry(5), asynq.Timeout(20*time.Minute)), nil
 }
 
 // ImageProcessor implements asynq.Handler interface.
