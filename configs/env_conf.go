@@ -13,7 +13,7 @@ type EnvConf struct {
 func NewEnv() EnvConf {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("cannot load env: %v", err)
+		log.Printf("cannot load env: %v", err)
 	}
 
 	var envConf EnvConf
