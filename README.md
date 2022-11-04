@@ -1,7 +1,7 @@
 
 # Task Queue Asynq
 
-Inspired by Sidekiq from Ruby, I try to make Simple Task App for Queue Processing with the help of Asynq library using Go language and Asynqmon to Serve Monitoring Dashboard
+Inspired by Sidekiq from Ruby, I try to make Simple Task App for Queue Processing with the help of Asynq library and Asynqmon to Serve Monitoring Dashboard. Written with Go language.
 
 ## Requirements
 
