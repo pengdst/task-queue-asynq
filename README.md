@@ -56,6 +56,25 @@ Start the server
   go run task-queue-asynq/cmd/server
 ```
 
+### Using docker-compose
+
+Go to the project directory
+
+```bash
+  cd task-queue-asynq
+```
+
+Create docker-compose.yml file and fill environment 
+
+```bash
+  cp docker-compose.yml.example docker-compose.yml 
+```
+
+Start the server
+
+```bash
+  docker-compose up
+```
 
 ## API Reference
 
