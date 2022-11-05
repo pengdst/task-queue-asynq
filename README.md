@@ -109,7 +109,7 @@ Takes user_id and template_id and return message queue task status.
 Takes image_url and return message queue task status.
 
 ```http
-  POST /email/delivery
+  POST /image/resize
 ```
 
 | Parameter      | Type     | Description                       |
