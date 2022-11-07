@@ -4,21 +4,21 @@ services:
   server:
     image: task-queue-asynq-server:latest
     build:
-      dockerfile: DockerfileServer
+      dockerfile: cmd/server/Dockerfile
       context: .
     restart: always
     container_name: task-queue-asynq-server_container
+    depends_on:
+      - client
     environment:
       - REDIS_URL=host.docker.internal:6379
 
   client:
     image: task-queue-asynq-client:latest
     build:
-      dockerfile: ./DockerfileClient
+      dockerfile: cmd/client/Dockerfile
       context: .
     restart: always
-    depends_on:
-      - server
     container_name: task-queue-asynq-client_container
     ports:
       - '8080:8080'

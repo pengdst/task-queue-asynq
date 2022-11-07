@@ -8,7 +8,7 @@ ARG VERSION
 ARG CGO_ENABLED
 
 WORKDIR /app/src
-COPY . .
+COPY ../.. .
 
 RUN go mod tidy
 RUN go build -ldflags "-s -w -X main.version=${VERSION}" -o /app/task-queue-asynq ./cmd/client
