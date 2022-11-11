@@ -12,6 +12,7 @@ COPY ../.. .
 
 RUN go mod tidy
 RUN go build -ldflags "-s -w -X main.version=${VERSION}" -o /app/task-queue-asynq ./cmd/client
+RUN go build -ldflags "-s -w -X main.version=${VERSION}" -o /app/asynq-server ./cmd/server
 
 WORKDIR /app
 
@@ -23,4 +24,5 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 WORKDIR /app
 COPY --from=builder /app/task-queue-asynq ./app
-CMD ["./app"]
+COPY --from=builder /app/asynq-server ./server
+CMD ["./app", "./server"]

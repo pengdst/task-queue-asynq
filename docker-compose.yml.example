@@ -2,11 +2,13 @@ version: "3"
 
 services:
   server:
-    image: task-queue-asynq-server:latest
+    image: task-queue-asynq:latest
     build:
-      dockerfile: cmd/server/Dockerfile
+      dockerfile: Dockerfile
       context: .
     restart: always
+    command:
+      - ./server
     container_name: task-queue-asynq-server_container
     depends_on:
       - client
@@ -14,9 +16,9 @@ services:
       - REDIS_URL=host.docker.internal:6379
 
   client:
-    image: task-queue-asynq-client:latest
+    image: task-queue-asynq:latest
     build:
-      dockerfile: cmd/client/Dockerfile
+      dockerfile: Dockerfile
       context: .
     restart: always
     container_name: task-queue-asynq-client_container
