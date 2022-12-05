@@ -14,9 +14,15 @@ To run this project, you will need to add the following environment variables to
 
 `REDIS_URL`
 
+`KRAKEN_API_KEY`
+
+`KRAKEN_API_SECRET`
+
 `PORT` <= Optional
 
 ## Run Locally
+
+_Before run this app, you must create an account at https://kraken.io/ then copy your API Key and Secret._
 
 Clone the project
 
@@ -140,6 +146,13 @@ Takes image_url and return message queue task status.
  - [Simple, reliable & efficient distributed task queue in Go](https://github.com/hibiken/asynq)
  - [Web UI for monitoring & administering Asynq task queue](https://github.com/hibiken/asynqmon)
 
+## Tech Stack
+
+**API Client:** [Resty](https://github.com/go-resty/resty)
+
+**Server:** [Gin](https://github.com/gin-gonic/gin)
+
+**Image Resize:** [Kraken](https://kraken.io)
 
 ## Contributing
 
