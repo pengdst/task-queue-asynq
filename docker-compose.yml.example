@@ -27,3 +27,5 @@ services:
     environment:
       - GIN_MODE=debug
       - REDIS_URL=
+      - KRAKEN_API_KEY=
+      - KRAKEN_API_SECRET=
