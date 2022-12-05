@@ -4,6 +4,7 @@ import (
 	"github.com/hibiken/asynq"
 	"log"
 	"task-queue-asynq/configs"
+	"task-queue-asynq/repository"
 	"task-queue-asynq/tasks"
 	"task-queue-asynq/tasks/prority"
 	taskType "task-queue-asynq/tasks/type"
@@ -33,10 +34,12 @@ func main() {
 		},
 	)
 
+	imageResizeRepository := repository.NewImageResizeRepository()
+
 	// mux maps a type to a handler
 	mux := asynq.NewServeMux()
 	mux.HandleFunc(taskType.TypeEmailDelivery, tasks.HandleEmailDeliveryTask)
-	mux.Handle(taskType.TypeImageResize, tasks.NewImageProcessor())
+	mux.Handle(taskType.TypeImageResize, tasks.NewImageProcessor(imageResizeRepository))
 	// ...register other handlers...
 
 	if err := asynqServer.Run(mux); err != nil {

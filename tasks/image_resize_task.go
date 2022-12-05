@@ -28,7 +28,7 @@ func NewImageResizeTask(src string) (*asynq.Task, error) {
 
 // ImageProcessor implements asynq.Handler interface.
 type ImageProcessor struct {
-	// ... fields for struct
+	ImageResizeRepository repository.ImageResizeRepository
 }
 
 func (processor *ImageProcessor) ProcessTask(ctx context.Context, t *asynq.Task) error {
@@ -38,9 +38,7 @@ func (processor *ImageProcessor) ProcessTask(ctx context.Context, t *asynq.Task)
 	}
 	log.Printf("Resizing image: src=%s", p.SourceURL)
 
-	imageResizeRepository := repository.NewImageResizeRepository()
-
-	data, err := imageResizeRepository.Resize(kraken.Request{
+	data, err := processor.ImageResizeRepository.Resize(kraken.Request{
 		Auth: kraken.Auth{
 			ApiKey:    os.Getenv("KRAKEN_API_KEY"),
 			ApiSecret: os.Getenv("KRAKEN_API_SECRET"),
@@ -66,6 +64,8 @@ func (processor *ImageProcessor) ProcessTask(ctx context.Context, t *asynq.Task)
 	return nil
 }
 
-func NewImageProcessor() *ImageProcessor {
-	return &ImageProcessor{}
+func NewImageProcessor(resizeRepository repository.ImageResizeRepository) *ImageProcessor {
+	return &ImageProcessor{
+		ImageResizeRepository: resizeRepository,
+	}
 }
