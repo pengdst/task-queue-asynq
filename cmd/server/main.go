@@ -1,8 +1,13 @@
 package main
 
 import (
+	"context"
+	firebase "firebase.google.com/go/v4"
 	"github.com/hibiken/asynq"
+	"google.golang.org/api/option"
 	"log"
+	"os"
+	"path"
 	"task-queue-asynq/configs"
 	"task-queue-asynq/repository"
 	"task-queue-asynq/tasks"
@@ -18,6 +23,19 @@ func init() {
 
 func main() {
 	redisAddr := envConf.RedisUrl
+
+	getwd, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("failed to get wd")
+	}
+	opt := option.WithCredentialsFile(path.Join(getwd, "serviceAccountKey.json"))
+
+	firebaseApp, err := firebase.NewApp(context.Background(), &firebase.Config{
+		ProjectID: envConf.FirebaseProject,
+	}, opt)
+	if err != nil {
+		log.Fatalf("error initializing firebaseApp: %v\n", err)
+	}
 
 	asynqServer := asynq.NewServer(
 		asynq.RedisClientOpt{Addr: redisAddr},
@@ -40,6 +58,7 @@ func main() {
 	mux := asynq.NewServeMux()
 	mux.HandleFunc(taskType.TypeEmailDelivery, tasks.HandleEmailDeliveryTask)
 	mux.Handle(taskType.TypeImageResize, tasks.NewImageProcessor(imageResizeRepository))
+	mux.Handle(taskType.TypeFirebaseMessage, tasks.NewFirebaseMessageProcessor(firebaseApp))
 	// ...register other handlers...
 
 	if err := asynqServer.Run(mux); err != nil {
