@@ -9,6 +9,7 @@ import (
 	"os"
 	"task-queue-asynq/model/kraken"
 	"task-queue-asynq/repository"
+	"task-queue-asynq/tasks/prority"
 	taskType "task-queue-asynq/tasks/type"
 	"time"
 )
@@ -28,6 +29,7 @@ func NewImageResizeTask(src string) (*asynq.Task, error) {
 
 // ImageProcessor implements asynq.Handler interface.
 type ImageProcessor struct {
+	AsynqClient           *asynq.Client
 	ImageResizeRepository repository.ImageResizeRepository
 }
 
@@ -61,11 +63,36 @@ func (processor *ImageProcessor) ProcessTask(ctx context.Context, t *asynq.Task)
 	} else {
 		log.Println("Success, Optimized image URL: ", data.KrakedUrl)
 	}
+
+	task, err := NewFirebaseMessageTask("Success, Optimized image URL", data.KrakedUrl)
+	if err != nil {
+		return fmt.Errorf("send message failed: %v: %w", err, asynq.SkipRetry)
+	}
+
+	info, err := processor.AsynqClient.Enqueue(task, asynq.MaxRetry(3), asynq.Timeout(3*time.Minute), asynq.Queue(prority.PriorityCritical))
+	if err != nil {
+		return fmt.Errorf("could not enqueue tasks: %v", err)
+	}
+
+	log.Printf("enqueued tasks: id=%s queue=%s", info.ID, info.Queue)
+
+	task, err = NewFirebaseDatabaseTask(p.SourceURL, data.KrakedUrl)
+	if err != nil {
+		return fmt.Errorf("send message failed: %v: %w", err, asynq.SkipRetry)
+	}
+
+	info, err = processor.AsynqClient.Enqueue(task, asynq.MaxRetry(3), asynq.Timeout(3*time.Minute), asynq.Queue(prority.PriorityCritical))
+	if err != nil {
+		return fmt.Errorf("could not enqueue tasks: %v", err)
+	}
+
+	log.Printf("enqueued tasks: id=%s queue=%s", info.ID, info.Queue)
 	return nil
 }
 
-func NewImageProcessor(resizeRepository repository.ImageResizeRepository) *ImageProcessor {
+func NewImageProcessor(asynqClient *asynq.Client, resizeRepository repository.ImageResizeRepository) *ImageProcessor {
 	return &ImageProcessor{
+		AsynqClient:           asynqClient,
 		ImageResizeRepository: resizeRepository,
 	}
 }
