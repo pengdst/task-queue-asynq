@@ -1,6 +1,7 @@
 package _type
 
 const (
-	TypeEmailDelivery = "email:deliver"
-	TypeImageResize   = "image:resize"
+	TypeEmailDelivery   = "email:deliver"
+	TypeImageResize     = "image:resize"
+	TypeFirebaseMessage = "firebase:message"
 )
