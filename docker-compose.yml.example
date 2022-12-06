@@ -1,31 +1,29 @@
 version: "3"
 
 services:
-  server:
+  base: &default
     image: task-queue-asynq:latest
     build:
       dockerfile: Dockerfile
       context: .
+    environment:
+      GIN_MODE: release
+      REDIS_URL: host.docker.internal:6379
+      KRAKEN_API_KEY: 396fd20cccef0f5cc87cd00cfdc3a477
+      KRAKEN_API_SECRET: 96f4cca1866ba84f189b6b0c5e3ad1b44b5b1ff5
+      FIREBASE_PROJECT_ID: hello-fellas-a131c
+      FIREBASE_DATABASE_URL: https://hello-fellas-a131c-default-rtdb.firebaseio.com
+
+  server:
     restart: always
     command:
       - ./server
     container_name: task-queue-asynq-server_container
-    depends_on:
-      - client
-    environment:
-      - REDIS_URL=host.docker.internal:6379
 
   client:
-    image: task-queue-asynq:latest
-    build:
-      dockerfile: Dockerfile
-      context: .
     restart: always
     container_name: task-queue-asynq-client_container
     ports:
       - '8080:8080'
-    environment:
-      - GIN_MODE=debug
-      - REDIS_URL=
-      - KRAKEN_API_KEY=
-      - KRAKEN_API_SECRET=
+    depends_on:
+      - server
