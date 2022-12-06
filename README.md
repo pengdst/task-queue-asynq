@@ -19,11 +19,16 @@ To run this project, you will need to add the following environment variables to
 
 `KRAKEN_API_SECRET`
 
+`FIREBASE_PROJECT_ID`
+
+`FIREBASE_DATABASE_URL`
+
 `PORT` <= Optional
 
 ## Precondition
-
-_Before run this app, you must create an account at https://kraken.io/ then copy your API Key and Secret._
+_Before run this app, you must:_
+1. Create an account at https://kraken.io/ then copy your API Key and Secret.
+2. Generate Firebase service account key, then copy to root dir and rename to **_serviceAccountKey.json_**
 
 ## Run Locally
 
