@@ -6,6 +6,7 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/hibiken/asynqmon"
 	"log"
+	"path"
 	"reflect"
 	"strings"
 	"task-queue-asynq/configs"
@@ -48,7 +49,7 @@ func main() {
 	//// Go to http://localhost:8080/monitoring to see asynqmon homepage.
 	//log.Fatal(http.ListenAndServe(":8080", nil))
 
-	router.GET(asynqmonUI.RootPath()+"/*path", gin.WrapH(asynqmonUI))
+	router.Any(path.Join(asynqmonUI.RootPath(), "*path"), gin.WrapH(asynqmonUI))
 
 	router.Use(gin.CustomRecovery(exceptions.ErrorHandler))
 
