@@ -7,6 +7,7 @@ Inspired by Sidekiq from Ruby, I try to make Simple Task App for Queue Processin
 
 - Redis
 - Go >= 1.18
+- Kraken.io API Key and Secret
 
 ## Environment Variables
 
@@ -20,9 +21,11 @@ To run this project, you will need to add the following environment variables to
 
 `PORT` <= Optional
 
-## Run Locally
+## Precondition
 
 _Before run this app, you must create an account at https://kraken.io/ then copy your API Key and Secret._
+
+## Run Locally
 
 Clone the project
 
