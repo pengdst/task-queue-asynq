@@ -15,12 +15,14 @@ services:
       FIREBASE_DATABASE_URL: https://hello-fellas-a131c-default-rtdb.firebaseio.com
 
   server:
+    <<: *default
     restart: always
     command:
       - ./server
     container_name: task-queue-asynq-server_container
 
   client:
+    <<: *default
     restart: always
     container_name: task-queue-asynq-client_container
     ports:
