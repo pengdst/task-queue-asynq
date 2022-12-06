@@ -7,7 +7,8 @@ Inspired by Sidekiq from Ruby, I try to make Simple Task App for Queue Processin
 
 - Redis
 - Go >= 1.18
-- Kraken.io API Key and Secret
+- Kraken.io Account
+- Firebase Account
 
 ## Environment Variables
 
@@ -28,7 +29,12 @@ To run this project, you will need to add the following environment variables to
 ## Precondition
 _Before run this app, you must:_
 1. Create an account at https://kraken.io/ then copy your API Key and Secret.
-2. Generate Firebase service account key, then copy to root dir and rename to **_serviceAccountKey.json_**
+2. Generate Firebase service account key:
+   1. In the Firebase console, open Settings > Service Accounts.
+   2. Click Generate New Private Key, then confirm by clicking Generate Key.
+   3. Copy service account (.json) to go root dir and rename to **_serviceAccountKey.json_**
+
+
 
 ## Run Locally
 
@@ -153,6 +159,7 @@ Takes image_url and return message queue task status.
  - [📬 Asynq: simple, reliable & efficient distributed task queue for your next Go project](https://dev.to/koddr/asynq-simple-reliable-efficient-distributed-task-queue-for-your-next-go-project-4jhg)
  - [Simple, reliable & efficient distributed task queue in Go](https://github.com/hibiken/asynq)
  - [Web UI for monitoring & administering Asynq task queue](https://github.com/hibiken/asynqmon)
+ - [Add the Firebase Admin SDK to your server](https://firebase.google.com/docs/admin/setup?hl=en&authuser=0#go_1)
 
 ## Tech Stack
 
