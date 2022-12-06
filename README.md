@@ -96,6 +96,12 @@ Start the server
   docker-compose up
 ```
 
+or Start and Build the image
+
+```bash
+  docker-compose up --build
+```
+
 ## API Reference
 
 #### Show Dashboard
