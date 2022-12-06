@@ -7,7 +7,11 @@ import (
 )
 
 type EnvConf struct {
-	RedisUrl string `env:"REDIS_URL,required"`
+	RedisUrl            string `env:"REDIS_URL,required"`
+	KrakenKey           string `env:"KRAKEN_API_KEY,required"`
+	KrakenSecret        string `env:"KRAKEN_API_SECRET,required"`
+	FirebaseProject     string `env:"FIREBASE_PROJECT_ID,required"`
+	FirebaseDatabaseUrl string `env:"FIREBASE_DATABASE_URL,required"`
 }
 
 func NewEnv() EnvConf {
