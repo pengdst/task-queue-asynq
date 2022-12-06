@@ -2,3 +2,4 @@
 /.idea/task-queue-asynq.iml
 /.idea/vcs.xml
 /.env
+/serviceAccountKey.json
