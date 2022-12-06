@@ -175,6 +175,8 @@ Takes image_url and return message queue task status.
 
 **Image Resize:** [Kraken](https://kraken.io)
 
+**Firebase:** [Firebase Messaging](https://firebase.google.com/docs/cloud-messaging), [Firebase Database](https://firebase.google.com/docs/database)
+
 ## Contributing
 
 Contributions are always welcome!
