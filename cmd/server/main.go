@@ -31,7 +31,8 @@ func main() {
 	opt := option.WithCredentialsFile(path.Join(getwd, "serviceAccountKey.json"))
 
 	firebaseApp, err := firebase.NewApp(context.Background(), &firebase.Config{
-		ProjectID: envConf.FirebaseProject,
+		ProjectID:   envConf.FirebaseProject,
+		DatabaseURL: envConf.FirebaseDatabaseUrl,
 	}, opt)
 	if err != nil {
 		log.Fatalf("error initializing firebaseApp: %v\n", err)
@@ -52,13 +53,17 @@ func main() {
 		},
 	)
 
+	asynqClient := asynq.NewClient(asynq.RedisClientOpt{Addr: redisAddr})
+	defer asynqClient.Close()
+
 	imageResizeRepository := repository.NewImageResizeRepository()
 
 	// mux maps a type to a handler
 	mux := asynq.NewServeMux()
 	mux.HandleFunc(taskType.TypeEmailDelivery, tasks.HandleEmailDeliveryTask)
-	mux.Handle(taskType.TypeImageResize, tasks.NewImageProcessor(imageResizeRepository))
+	mux.Handle(taskType.TypeImageResize, tasks.NewImageProcessor(asynqClient, imageResizeRepository))
 	mux.Handle(taskType.TypeFirebaseMessage, tasks.NewFirebaseMessageProcessor(firebaseApp))
+	mux.Handle(taskType.TypeFirebaseDatabase, tasks.NewFirebaseDatabaseProcessor(firebaseApp))
 	// ...register other handlers...
 
 	if err := asynqServer.Run(mux); err != nil {
