@@ -64,29 +64,33 @@ func (processor *ImageProcessor) ProcessTask(ctx context.Context, t *asynq.Task)
 		log.Println("Success, Optimized image URL: ", data.KrakedUrl)
 	}
 
-	task, err := NewFirebaseMessageTask("Success, Optimized image URL", data.KrakedUrl)
-	if err != nil {
-		return fmt.Errorf("send message failed: %v: %w", err, asynq.SkipRetry)
-	}
+	go func() {
+		task, errTask := NewFirebaseMessageTask("Success, Optimized image URL", data.KrakedUrl)
+		if errTask != nil {
+			return
+		}
 
-	info, err := processor.AsynqClient.Enqueue(task, asynq.MaxRetry(3), asynq.Timeout(3*time.Minute), asynq.Queue(prority.PriorityCritical))
-	if err != nil {
-		return fmt.Errorf("could not enqueue tasks: %v", err)
-	}
+		info, errTask := processor.AsynqClient.Enqueue(task, asynq.MaxRetry(3), asynq.Timeout(3*time.Minute), asynq.Queue(prority.PriorityDefault))
+		if errTask != nil {
+			return
+		}
+		log.Printf("enqueued tasks: id=%s queue=%s", info.ID, info.Queue)
+	}()
 
-	log.Printf("enqueued tasks: id=%s queue=%s", info.ID, info.Queue)
+	go func() {
+		task, errTask := NewFirebaseDatabaseTask(p.SourceURL, data.KrakedUrl)
+		if errTask != nil {
+			return
+		}
 
-	task, err = NewFirebaseDatabaseTask(p.SourceURL, data.KrakedUrl)
-	if err != nil {
-		return fmt.Errorf("send message failed: %v: %w", err, asynq.SkipRetry)
-	}
+		info, errTask := processor.AsynqClient.Enqueue(task, asynq.MaxRetry(3), asynq.Timeout(3*time.Minute), asynq.Queue(prority.PriorityCritical))
+		if errTask != nil {
+			return
+		}
 
-	info, err = processor.AsynqClient.Enqueue(task, asynq.MaxRetry(3), asynq.Timeout(3*time.Minute), asynq.Queue(prority.PriorityCritical))
-	if err != nil {
-		return fmt.Errorf("could not enqueue tasks: %v", err)
-	}
+		log.Printf("enqueued tasks: id=%s queue=%s", info.ID, info.Queue)
+	}()
 
-	log.Printf("enqueued tasks: id=%s queue=%s", info.ID, info.Queue)
 	return nil
 }
 
