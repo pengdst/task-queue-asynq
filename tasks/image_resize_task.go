@@ -67,24 +67,29 @@ func (processor *ImageProcessor) ProcessTask(ctx context.Context, t *asynq.Task)
 	go func() {
 		task, errTask := NewFirebaseMessageTask("Success, Optimized image URL", data.KrakedUrl)
 		if errTask != nil {
+			log.Println("Failed create task: ", errTask)
 			return
 		}
 
 		info, errTask := processor.AsynqClient.Enqueue(task, asynq.MaxRetry(3), asynq.Timeout(3*time.Minute), asynq.Queue(prority.PriorityDefault))
 		if errTask != nil {
+			log.Println("Failed enqueue task: ", errTask)
 			return
 		}
+
 		log.Printf("enqueued tasks: id=%s queue=%s", info.ID, info.Queue)
 	}()
 
 	go func() {
 		task, errTask := NewFirebaseDatabaseTask(p.SourceURL, data.KrakedUrl)
 		if errTask != nil {
+			log.Println("Failed create task: ", errTask)
 			return
 		}
 
 		info, errTask := processor.AsynqClient.Enqueue(task, asynq.MaxRetry(3), asynq.Timeout(3*time.Minute), asynq.Queue(prority.PriorityCritical))
 		if errTask != nil {
+			log.Println("Failed enqueue task: ", errTask)
 			return
 		}
 
